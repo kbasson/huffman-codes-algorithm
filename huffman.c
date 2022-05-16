@@ -75,7 +75,7 @@ int main() {
     }
 
     //Use node array to create Huffman Tree
-    Node* root = createHuffmanTree(nodes, numNodes);
+    Node* root = createHuffmanTree(nodes, &numNodes);
     if (root == NULL) return -1;
 
     //DEFINE AND INITIALIZE TRAVERSAL STRING FOR updateHashTableCodes()
@@ -88,15 +88,14 @@ int main() {
     }
 
     updateHashTableCodes(hashTable, root, str, -1, START);
+    
     //printHashTable(hashTable);
+    //printNodes(root); //Print Huffman Tree
 
-    printNodes(root); //Print Huffman Tree
-
-    printf("\nRUNNING MAIN PROGRAM\n");
     int size = numChars * sizeof(char) * MAX_CODE;
     char userInput[size]; //Holds user input
 
-    while (1) { //Run decoding program
+    while (1) { //Run main program
 
         //Prompt user entry
         printf("\nEnter 1 to convert user string to encoded binary\n");
@@ -182,7 +181,7 @@ int main() {
             while (!feof(file)) { //For all original text file chars
 
                 char current = fgetc(file);
-                fprintf(write, "%s ", hashTable[(int)(current)].code); //Write corresponding Huffman code to new file
+                fprintf(write, "%s", hashTable[(int)(current)].code); //Write corresponding Huffman code to new file
 
             }
 
