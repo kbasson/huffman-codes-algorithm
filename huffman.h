@@ -10,8 +10,15 @@
 #include <string.h>
 
 #define FILENAME "newText.txt" //Name of file containing adjacency matrix
-#define SIZE 50 //Max length of user binary string to be decoded
-#define MAX_CODE 128 //Max length of the binary code of a char
+#define MAX_CODE 300 //Max length of the binary code of a char
+
+typedef enum dir { //Enumerates the direction of travel when traversing tree, used to define Huffman encodings for each letter
+
+    START,
+    LEFT,
+    RIGHT
+
+} Direction;
 
 typedef struct entry { //Represents an item in the has table
 
@@ -34,14 +41,6 @@ typedef struct node { //Represents a node in Huffman tree
 
 } Node;
 
-typedef enum dir { //Enumerates the direction of travel when traversing tree, used to define Huffman encodings for each letter
-
-    START,
-    LEFT,
-    RIGHT
-
-} Direction;
-
 //--HASH TABLE FUNCTIONS-------------------------------------------------
 
 void initializeHashTable(Entry hashTable[INT8_MAX + 1]); //Initialize each element in hash table
@@ -61,7 +60,7 @@ void printNodes(Node* root); //Print Huffman tree
 void mergeSort(Node* nodes[], int low, int high); //Recursive calls for mergesort
 void merge(Node* nodes[], int low, int mid, int high); //Merge 2 subarrays into larger sorted subarray
 
-Node* createHuffmanTree(Node* nodes[], int numNodes); //Create Huffman tree from node array
+Node* createHuffmanTree(Node* nodes[], int* numNodes); //Create Huffman tree from node array
 
 //-----------------------------------------------------------------------
 
