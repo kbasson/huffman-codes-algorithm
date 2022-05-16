@@ -31,6 +31,7 @@ void updateHashTableFrequency(Entry hashTable[INT8_MAX + 1], char current) { //I
 
 }
 
+
 void updateHashTableCodes(Entry hashTable[INT8_MAX + 1], Node* root, char str[MAX_CODE], int i, Direction direction) { //Update the huffman codes of each hash table entry using created Huffman tree
 
     if (root == NULL) { //Recursion Base Case
@@ -56,6 +57,7 @@ void updateHashTableCodes(Entry hashTable[INT8_MAX + 1], Node* root, char str[MA
                 //Copy traversal string to corresponding hash table entry
                 int index = (int)(root -> character);
                 strcpy(hashTable[index].code, str);
+                hashTable[index].code[i + 1] = '\0';
 
             }
 
@@ -89,9 +91,10 @@ Node* createNode(Entry* entry) { //Allocate and return an initialized node point
     Node* node = malloc(sizeof(Node)); //Allocate memory for Node
     if (node == NULL) return NULL; //NULL ptr check
 
-    //Initialize Node using Entry data
+    //Initialize Node
     node -> character = entry -> character;
     node -> frequency = entry -> frequency;
+
     node -> left = NULL;
     node -> right = NULL;
 
@@ -109,7 +112,7 @@ void printNodes(Node* root) { //Given a tree, print it using recursion
     if (root -> character != -1) printf("Character %d: %c\n", root -> character, root -> character);
     else printf("Character %d: NONE\n", root -> character);
 
-    printf("Frequency: %d\n\n", root -> frequency); //Print node
+    printf("Frequency: %d\n", root -> frequency); //Print node
 
     //Print going to left
     if (root -> character != -1) printf("Going left on character %d, %c\n", root -> character, root -> character);
@@ -211,11 +214,13 @@ void merge(Node* nodes[], int low, int mid, int high) { //Merge 2 subarrays into
 
 }
 
-Node* createHuffmanTree(Node* nodes[], int numNodes) { //Create Huffman tree from node array
+Node* createHuffmanTree(Node* nodes[], int* numNodes) { //Create Huffman tree from node array
 
-    for (int i = 0; i < (numNodes - 1); i++) { //For all nodes
+    int copy = *numNodes; //Get original number of nodes
 
-        mergeSort(nodes, i, numNodes - 1); //Sort array
+    for (int i = 0; i < (copy - 1); i++) { //For all nodes
+
+        mergeSort(nodes, i, copy - 1); //Sort array
 
         //CREATE ENTRY FOR COMBINED NODE
         Entry entry;
@@ -229,7 +234,7 @@ Node* createHuffmanTree(Node* nodes[], int numNodes) { //Create Huffman tree fro
         
         if (new == NULL) { //IF createNode() returns NULL
             
-            for (int k = 0; k < (numNodes - 1); k++) {
+            for (int k = 0; k < (copy - 1); k++) {
 
                 freeNodes(nodes[i]);
 
@@ -243,9 +248,11 @@ Node* createHuffmanTree(Node* nodes[], int numNodes) { //Create Huffman tree fro
         nodes[i] = NULL;
         nodes[i + 1] = new;
 
+        (*numNodes)++; //Update number of nodes
+
     }
 
-    return nodes[numNodes - 1]; //Return root node
+    return nodes[copy - 1]; //Return root node
 
 }
 
@@ -270,13 +277,11 @@ char* decode(Node* root, char* userInput, int numChars) { //Given binary string,
 
         if (userInput[i] == '0') { //Go left if zero
 
-            //printf("Going left\n");
             temp = temp -> left;
 
 
         } else if (userInput[i] == '1') { //Go right if one
 
-            //printf("Going right\n");
             temp = temp -> right;
 
         } else { //Return if invalid
@@ -289,9 +294,7 @@ char* decode(Node* root, char* userInput, int numChars) { //Given binary string,
 
         if (temp -> character != -1) { //If valid char reached
 
-            //printf("current char = %c (%d)\n", temp -> character, temp -> character);
             currentStr[k++] = temp -> character; //Append char to end of traversal string
-
             temp = root; //Reset Traversal node ptr
 
         }
